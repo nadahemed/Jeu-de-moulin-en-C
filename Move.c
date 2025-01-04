@@ -140,7 +140,6 @@ int getposition(){
     Jeu_index+=1;
     printf("\n");
     printf(rouge);
-    printf("Vous tapez Quittez pour quitter le jeu!!");
     printf(reset);
     
 
