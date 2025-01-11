@@ -2,9 +2,10 @@
 #include <ctype.h>
 #include <unistd.h>
 #include "grille.h"
+#include "protomove.h"
+#include "estmoulin.c"
+#include "retirePion.c"
 #include <stdbool.h>
-
-
 #define taille 24
 #define MAX_PIONS 9
 
@@ -122,9 +123,8 @@ void Board(char board[]){
 
 int getposition() {
     int position;
-    char pion;
     char board[taille]; 
-    int joueur = 1; // 1 pour Joueur 1, 2 pour Joueur 2
+    int joueurActuel = 1; // 1 pour Joueur 1, 2 pour Joueur 2
     int Jeu_index = 0;
 
     // Initialisation de la grille
@@ -138,7 +138,10 @@ int getposition() {
 
     // Boucle principale du jeu
     while (Jeu_index < taille) {
-        printf("Joueur1 %d, entrez une position (0-23) :\n ", joueur);
+        char pionActuel = (joueurActuel == 1) ? 'X' : 'O';
+        char pionAdverse = (joueurActuel == 1) ? 'O' : 'X';
+
+        printf("Joueur %d (%c), entrez une position (0-23) : ", joueurActuel, pionActuel);
         if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
             printf("Position invalide. Veuillez entrer un nombre entre 0 et 23.\n");
             while (getchar() != '\n'); // Vider le tampon
@@ -150,23 +153,19 @@ int getposition() {
             continue;
         }
 
-        printf("Joueur %d, entrez votre pion (X ou O) : \n", joueur);
-        while (getchar() != '\n'); // Vider le tampon
-        scanf("%c", &pion);
-        pion = toupper(pion);
-
-        if ((joueur == 1 && pion != 'X') || (joueur == 2 && pion != 'O')) {
-            printf("Pion invalide. Joueur %d doit jouer avec %s.\n", joueur, (joueur == 1) ? "X" : "O");
-            continue;
-        }
-
         // Placer le pion sur la grille
-        board[position] = pion;
+        board[position] = pionActuel;
         Board(board);
         printf("\n");
 
+        // Vérifier si un moulin est formé
+        if (estMoulin(board, position, pionActuel)) {
+            printf("Moulin formé par Joueur %d (%c) !\n", joueurActuel, pionActuel);
+            retirerPion(board, pionAdverse);
+        }
+
         // Passer au joueur suivant
-        joueur = (joueur == 1) ? 2 : 1;
+        joueurActuel = (joueurActuel == 1) ? 2 : 1;
         Jeu_index++;
     }
 

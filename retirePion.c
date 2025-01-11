@@ -15,6 +15,9 @@ void retirerPion(char board[], char pionAdverse) {
             continue;
         }
         board[position] = '*'; 
+        Board(board);
+        printf("\n");
+        break;
     }
 }
 
