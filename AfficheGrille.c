@@ -118,5 +118,6 @@ void AfficheGrille(){
     printf("*");
     printf(reset);
     printf("\n");
+    return 0;
 
 }

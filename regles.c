@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 #include "grille.h"
 
 void regles(){
@@ -18,11 +19,17 @@ void regles(){
     printf(reset);
     printf(rouge);
     printf("|                1-La pose puis le mouvememt                                |\n");
+    sleep(1);
     printf("|                2-Choisir l'un des lettres pour poser le pion              |\n");
+    sleep(1);
     printf("|                3-Une fois sorti de jeu ,un pion n'est plus disponible     |\n");
+    sleep(1);
     printf("|                4-La perte si tu n'as plus que deux pions,ou bloque        |\n");
+    sleep(1);
     printf("|                5-Le double_moulin                                         |\n");
+    sleep(1);
     printf("|                                                                           |\n");
+    sleep(1);
     printf(reset);
     printf(bleu);
     for (j=0;j<6;j++){

@@ -2,7 +2,11 @@
 #include <ctype.h>
 #include <unistd.h>
 #include "grille.h"
+#include <stdbool.h>
+
+
 #define taille 24
+#define MAX_PIONS 9
 
 void Board(char board[]){
     const char *rouge = "\033[1;31m"; 
@@ -114,67 +118,57 @@ void Board(char board[]){
     printf("%c",board[23]);
 
 }
-int getposition(){
+
+
+int getposition() {
     int position;
-    char pion,quitt;
-    const char *rouge = "\033[1;31m"; 
-    const char *reset = "\033[0m"; 
-    int Jeu_index=0;
+    char pion;
     char board[taille]; 
-         for (int i=0;i<taille;i++){
-            board[i]='*';
-         }
+    int joueur = 1; // 1 pour Joueur 1, 2 pour Joueur 2
+    int Jeu_index = 0;
+
+    // Initialisation de la grille
+    for (int i = 0; i < taille; i++) {
+        board[i] = '*';
+    }
+
     printf("La grille initiale est : \n");
     Board(board);
     printf("\n");
-    sleep(2);
-    while(Jeu_index<taille){
-    
-    printf("\n");
-    scanf("%d",&position); 
-    printf("\n");
-    scanf("%c",&pion);
-    pion=toupper(pion);
-    board[position]=pion;
-    Board(board); 
-    Jeu_index+=1;
-    printf("\n");
-    printf(rouge);
-    printf(reset);
-    
 
+    // Boucle principale du jeu
+    while (Jeu_index < taille) {
+        printf("Joueur1 %d, entrez une position (0-23) :\n ", joueur);
+        if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+            printf("Position invalide. Veuillez entrer un nombre entre 0 et 23.\n");
+            while (getchar() != '\n'); // Vider le tampon
+            continue;
+        }
 
+        if (board[position] != '*') {
+            printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
+            continue;
+        }
+
+        printf("Joueur %d, entrez votre pion (X ou O) : \n", joueur);
+        while (getchar() != '\n'); // Vider le tampon
+        scanf("%c", &pion);
+        pion = toupper(pion);
+
+        if ((joueur == 1 && pion != 'X') || (joueur == 2 && pion != 'O')) {
+            printf("Pion invalide. Joueur %d doit jouer avec %s.\n", joueur, (joueur == 1) ? "X" : "O");
+            continue;
+        }
+
+        // Placer le pion sur la grille
+        board[position] = pion;
+        Board(board);
+        printf("\n");
+
+        // Passer au joueur suivant
+        joueur = (joueur == 1) ? 2 : 1;
+        Jeu_index++;
+    }
+
+    return 0;
 }
-
-}
-
-
-
-    
-    
-
-
-
-
-
-
-
-
-
-    
-
-
-   
-    
-
-
-
-
-    
-
-
-
-    
-    
-
-
