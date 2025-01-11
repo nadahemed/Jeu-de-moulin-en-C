@@ -1,7 +1,7 @@
 #define taille 24
 
 
-void retirerPion(char board[], char pionAdverse) {
+void retirePion(char board[], char pionAdverse) {
     int position;
     while (1) {
         printf("Choisissez un pion adverse (%c) à retirer (0-23) : ", pionAdverse);

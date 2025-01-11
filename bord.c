@@ -5,7 +5,7 @@
 #include "AfficheLettre.c"
 #include "Start.c"
 #include "menu.c"
-#include "Move.c"
+#include "JoueurVsJoueur.c"
 #define taille 24
 #include "regles.c"
 #include "Explicationsaisie.c"
@@ -68,5 +68,6 @@ int main(){
    return 0;
 
 }
+
 
 

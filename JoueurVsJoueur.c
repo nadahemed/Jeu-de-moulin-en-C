@@ -3,11 +3,17 @@
 #include <unistd.h>
 #include "grille.h"
 #include "protomove.h"
+#include "estbloque.h"
 #include "estmoulin.c"
-#include "retirePion.c"
+#include "retirerpion.c"
+#include "estbloque.c"
 #include <stdbool.h>
+#include <time.h>
 #define taille 24
 #define MAX_PIONS 9
+#define TIME_LIMIT 30
+
+
 
 void Board(char board[]){
     const char *rouge = "\033[1;31m"; 
@@ -125,7 +131,10 @@ int getposition() {
     int position;
     char board[taille]; 
     int joueurActuel = 1; // 1 pour Joueur 1, 2 pour Joueur 2
-    int Jeu_index = 0;
+    int PionRestX = MAX_PIONS;
+    int PionRestO = MAX_PIONS;
+    int movesX = 0; // Nombre de positions saisies par Joueur 1
+    int movesO = 0; // Nombre de positions saisies par Joueur 2
 
     // Initialisation de la grille
     for (int i = 0; i < taille; i++) {
@@ -137,9 +146,18 @@ int getposition() {
     printf("\n");
 
     // Boucle principale du jeu
-    while (Jeu_index < taille) {
+    while (true) {
         char pionActuel = (joueurActuel == 1) ? 'X' : 'O';
         char pionAdverse = (joueurActuel == 1) ? 'O' : 'X';
+        int *PionRestAdverse = (joueurActuel == 1) ? &PionRestO : &PionRestX;
+        int *currentMoves = (joueurActuel == 1) ? &movesX : &movesO;
+
+        // Vérifier si le joueur a atteint la limite de 9 mouvements
+        if (*currentMoves >= 9) {
+            printf("Joueur %d (%c) ne peut plus placer de pions.\n", joueurActuel, pionActuel);
+            joueurActuel = (joueurActuel == 1) ? 2 : 1; // Passer au joueur suivant
+            continue;
+        }
 
         printf("Joueur %d (%c), entrez une position (0-23) : ", joueurActuel, pionActuel);
         if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
@@ -155,19 +173,36 @@ int getposition() {
 
         // Placer le pion sur la grille
         board[position] = pionActuel;
+        (*currentMoves)++; // Incrémenter le compteur de mouvements du joueur
         Board(board);
         printf("\n");
 
         // Vérifier si un moulin est formé
         if (estMoulin(board, position, pionActuel)) {
             printf("Moulin formé par Joueur %d (%c) !\n", joueurActuel, pionActuel);
-            retirerPion(board, pionAdverse);
+
+            // Retirer un pion adverse
+            retirePion(board, pionAdverse);
+            (*PionRestAdverse)--; // Décrémenter le nombre de pions adverses
+
+            // Vérifier si l'adversaire a moins de 3 pions
+            if (*PionRestAdverse < 3) {
+                printf("Joueur %d (%c) a gagné ! Joueur %d (%c) n'a plus que %d pions.\n",
+                       joueurActuel, pionActuel, (joueurActuel == 1) ? 2 : 1, pionAdverse, *PionRestAdverse);
+                return 0; // Fin du jeu
+            }
+        }
+
+        // Vérifier si les deux joueurs ont utilisé leurs 9 positions
+        if (movesX >= 9 && movesO >= 9) {
+            printf("Le jeu est terminé. Aucune victoire déterminée après 9 tours pour chaque joueur.\n");
+            return 0; // Fin du jeu
         }
 
         // Passer au joueur suivant
         joueurActuel = (joueurActuel == 1) ? 2 : 1;
-        Jeu_index++;
     }
 
     return 0;
 }
+
