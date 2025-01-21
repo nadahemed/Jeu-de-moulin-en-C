@@ -50,7 +50,7 @@ void AfficheGrille(){
 
     }
     printf(reset);
-        printf(rose);
+        printf(rouge);
         printf("|                             *---------------------*-----------------------*                           |\n");
         printf(reset);
         printf(bleu);
@@ -65,7 +65,7 @@ void AfficheGrille(){
             printf("|                             |        |                        |           |                           |\n");
 
         }
-        printf(violet);
+        printf(rouge);
         printf("*-----------------------------*--------*                        *-----------*---------------------------*\n");
         printf(reset);
         printf(bleu);
@@ -74,7 +74,7 @@ void AfficheGrille(){
 
         }
         printf(reset);
-        printf(rose);
+        printf(rouge);
         printf("|                             |        *------------*-----------*           |                           |\n");
         printf(reset);
         printf(bleu);
@@ -83,7 +83,7 @@ void AfficheGrille(){
 
         }
         printf(reset);
-        printf(rose);
+        printf(rouge);
          printf("|                             *---------------------*-----------------------*                           |\n");
         printf(reset);
         printf(bleu);

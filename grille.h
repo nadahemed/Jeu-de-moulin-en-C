@@ -4,6 +4,7 @@
 
 void AfficheGrille();
 void AfficheLettres();
+int startmoulin();
 void Start();
 void regles();
 void menu();

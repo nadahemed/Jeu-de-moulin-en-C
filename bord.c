@@ -5,6 +5,7 @@
 #include "AfficheLettre.c"
 #include "Start.c"
 #include "menu.c"
+#include "jeutest.c"
 #include "JoueurVsJoueur.c"
 #define taille 24
 #include "regles.c"
@@ -36,6 +37,7 @@ int main(){
    switch (choix)
    {
    case 1:
+    startmoulin();
     AfficheGrille();
     sleep(2);
     Start();
@@ -52,6 +54,7 @@ int main(){
     Explicationsaisie();
     sleep(1);
     Board(board);
+    
     getposition();
     break;
    case 2:

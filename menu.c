@@ -22,42 +22,42 @@
     printf(rouge);
     printf("                        ---------------------------------------------------------------\n");
     printf(reset);
-    printf(vert);
+    printf(bleu);
     printf(" _________________________________________________________________________________________________________________\n");
     printf(reset);
-    printf(vert);
+    printf(bleu);
     for (i=0;i<4;i++){
         printf("|                                                                                                                 |\n");
 
     }
     printf(reset);
-    printf(bleu);
+    printf(rouge);
     printf("|                                       -------                      -------                                      |\n");
     printf("|                                               Effectuez vos choix!!!                                            |\n");
     printf("|                                       -------                      -------                                      |\n");
     printf(reset);
-    printf(vert);
+    printf(bleu);
     printf("|                                                                                                                 |\n");
     printf("|                                                                                                                 |\n");
     printf("|                                                                                                                 |\n");
     printf("|                                                                                                                 |\n");
     printf(reset);
-    printf(rose);
+    printf(rouge);
     printf("|                                                    1-Jouer                                                      |\n");
     printf(reset);
-    printf(bleu);
+    printf(rouge);
     printf("|                                                    2-Quitter                                                    |\n");
     printf(reset);
-    printf(violet);
+    printf(rouge);
     printf("|                                                    3-Afficher les regles du jeu                                 |           \n");
     printf(reset);
-    printf(vert);
+    printf(bleu);
     for (i=0;i<4;i++){
         printf("|                                                                                                                 |\n");
 
     }
     printf(reset);
-    printf(vert);
+    printf(bleu);
     printf(" _________________________________________________________________________________________________________________\n");
     printf(reset);
     }

@@ -12,8 +12,6 @@
 #include <time.h>
 #define taille 24
 #define MAX_PIONS 9
-#define TIME_LIMIT 30
-
 
 
 void Board(char board[]){
@@ -128,18 +126,18 @@ void Board(char board[]){
 }
 
 
-int getposition() {
+int getmachine() {
     int position;
     char board[taille];
-    int joueurActuel = 1;
+    int joueurActuel = 1;  
     int PionRestX = MAX_PIONS;
     int PionRestO = MAX_PIONS;
     int movesX = 0;
     int movesO = 0;
-    int moulinsX = 0; // Nombre de moulins pour X
-    int moulinsO = 0; // Nombre de moulins pour O
+    int moulinsX = 0; 
+    int moulinsO=0;
 
-    // Initialisation du tableau
+    
     for (int i = 0; i < taille; i++) {
         board[i] = '*';
     }
@@ -154,56 +152,65 @@ int getposition() {
         int *PionRestAdverse = (joueurActuel == 1) ? &PionRestO : &PionRestX;
         int *currentMoves = (joueurActuel == 1) ? &movesX : &movesO;
 
-        // Vérification si le joueur peut encore jouer
+       
         if (*currentMoves >= MAX_PIONS) {
             printf("Joueur %d (%c) ne peut plus placer de pions.\n", joueurActuel, pionActuel);
-            joueurActuel = 3 - joueurActuel; // Alterne entre 1 et 2
+            joueurActuel = 3 - joueurActuel; 
             continue;
         }
 
-        // Lecture de la position
-        printf("Joueur %d (%c), entrez une position (0-%d) : ", joueurActuel, pionActuel, taille - 1);
-        if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
-            printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
-            while (getchar() != '\n');
-            continue;
+        
+        if (joueurActuel == 1) {  
+            printf("Joueur %d (%c), entrez une position (0-%d) : ", joueurActuel, pionActuel, taille - 1);
+            if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+                printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                while (getchar() != '\n');
+                continue;
+            }
+
+            
+            if (board[position] != '*') {
+                printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
+                continue;
+            }
+        } else {  
+            srand(time(NULL));  
+            
+            do {
+                position = rand() % taille;
+            } while (board[position] != '*');  
+            printf("La machine (%c) choisit la position %d.\n", pionActuel, position);
         }
 
-        // Vérifie si la position est occupée
-        if (board[position] != '*') {
-            printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
-            continue;
-        }
-
-        // Placement du pion
+        
         board[position] = pionActuel;
         (*currentMoves)++;
-        Board(board);
+        Board(board);  
         printf("\n");
 
-        // Vérifie si un moulin est formé
+        
         if (estMoulin(board, position, pionActuel)) {
             printf("Moulin formé par Joueur %d (%c) !\n", joueurActuel, pionActuel);
 
-            // Ajoutez au compteur de moulins
+            
             if (joueurActuel == 1) {
                 moulinsX++;
             } else {
                 moulinsO++;
             }
 
-            // Retirez un pion adverse
+            
             retirePion(board, pionAdverse);
             (*PionRestAdverse)--;
 
-            // Vérifiez si l'adversaire a moins de 3 pions
+            
             if (*PionRestAdverse < 3) {
                 printf("Joueur %d (%c) a gagné !\n", joueurActuel, pionActuel);
                 return 0;
             }
         }
 
-        // Vérifie si les deux joueurs ne peuvent plus jouer
+        
         if (movesX >= MAX_PIONS && movesO >= MAX_PIONS) {
             printf("Les deux joueurs ont épuisé leurs mouvements.\n");
 
@@ -219,11 +226,8 @@ int getposition() {
         }
 
         // Changement de joueur
-        joueurActuel = 3 - joueurActuel; // Alterne entre 1 et 2
+        joueurActuel = 3 - joueurActuel; 
     }
 
     return 0;
 }
-
-
-
