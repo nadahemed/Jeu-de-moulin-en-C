@@ -138,10 +138,13 @@ int getposition() {
     int movesO = 0;
     int moulinsX = 0; // Nombre de moulins pour X
     int moulinsO = 0; // Nombre de moulins pour O
+    
+
+
 
     // Initialisation du tableau
     for (int i = 0; i < taille; i++) {
-        board[i] = '*';
+        board[i] ='*';
     }
 
     printf("La grille initiale est : \n");
@@ -168,6 +171,11 @@ int getposition() {
             while (getchar() != '\n');
             continue;
         }
+        if (position == -1) {  // Vérifie si le joueur veut quitter
+                               printf("Joueur %d (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", joueurActuel, pionActuel);
+                               exit(0);  // Quitte immédiatement le jeu
+                    }
+
 
         // Vérifie si la position est occupée
         if (board[position] != '*') {

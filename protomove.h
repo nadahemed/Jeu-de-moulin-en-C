@@ -2,9 +2,17 @@
 #define PROTOMOVE_H
 #define taille 24
 #include <stdbool.h>
+
+
 void retirePion(char board[], char pionAdverse);
 int estMoulin(char board[], int position, char pion);
 bool jeuTermine(char *board, int PionRestX, int PionRestO);
+int evaluer_plateau(char board[], char pionMachine, char pionAdverse);
+int minMax(char board[], int profondeur, bool maximiser, char pionActuel, char pionAdverse);
+int trouverMeilleurCoup(char board[], char pionActuel, char pionAdverse);
+void retirePionmch(char board[], char pionAdverse);
+int estMoulinmch(char board[], int position, char pion);
+
 
 #endif
 

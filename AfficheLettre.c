@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "grille.h"
 
-void AfficheLettres(){
+ void AfficheLettres(){
     int i;
     const char *rouge = "\033[1;31m"; 
     const char *vert = "\033[1;32m";
@@ -11,7 +11,7 @@ void AfficheLettres(){
     const char *rose = "\033[1;35m";    
     const char *violet = "\033[0;35m"; 
     printf(rouge);
-    printf("A");
+    printf("00");
     printf(reset);
     printf(bleu);
     for(i=0;i<3;i++){
@@ -23,17 +23,17 @@ void AfficheLettres(){
     }
     printf(reset);
     printf(rouge);
-    printf("B");
+    printf("01");
     printf(reset);
     printf(bleu);
     for(i=0;i<3;i++){
         
-         printf("-----------------");
+         printf("----------------");
         
     }
     printf(reset);
     printf(rouge);
-    printf("C");
+    printf("02");
     printf(reset);
     printf("\n");
     printf(bleu);
@@ -44,7 +44,7 @@ void AfficheLettres(){
     }
     printf(reset);
         printf(rouge);
-        printf("|                             D---------------------E-----------------------F                           |\n");
+        printf("|                             03--------------------04----------------------05                          |\n");
         printf(reset);
         printf(bleu);
         for(i=0;i<2;i++){
@@ -52,7 +52,7 @@ void AfficheLettres(){
 
         }
         printf(rouge);
-        printf("|                             |        G------------H-----------I           |                           |\n");
+        printf("|                             |        06-----------07----------08          |                           |\n");
         printf(reset);
         printf(bleu);
         for(i=0;i<4;i++){
@@ -60,7 +60,7 @@ void AfficheLettres(){
 
         }
         printf(rouge);
-        printf("J-----------------------------K--------L                        M-----------N---------------------------O\n");
+        printf("09----------------------------10-------11                     12-----------13--------------------------14\n");
         printf(reset);
         printf(bleu);
         for(i=0;i<4;i++){
@@ -69,7 +69,7 @@ void AfficheLettres(){
         }
         printf(reset);
         printf(rouge);
-        printf("|                             |        P------------Q-----------R           |                           |\n");
+        printf("|                             |        15------------16---------17          |                           |\n");
         printf(reset);
         printf(bleu);
         for(i=0;i<2;i++){
@@ -78,7 +78,7 @@ void AfficheLettres(){
         }
         printf(reset);
         printf(rouge);
-         printf("|                             S---------------------T-----------------------U                           |\n");
+         printf("|                             18--------------------19----------------------20                          |\n");
         printf(reset);
         printf(bleu);
          for (i=0;i<4;i++){
@@ -88,7 +88,7 @@ void AfficheLettres(){
     }
     printf(reset);
     printf(rouge);
-    printf("V");
+    printf("21");
     printf(reset);
     printf(bleu);
     for(i=0;i<3;i++){
@@ -99,18 +99,20 @@ void AfficheLettres(){
         
     }
     printf(rouge);
-    printf("W");
+    printf("22");
     printf(reset);
     printf(bleu);
     for(i=0;i<3;i++){
         
-         printf("-----------------");
+         printf("----------------");
         
     }
     printf(reset);
     printf(rouge);
-    printf("X");
+    printf("23");
     printf(reset);
+
+
 
     
 

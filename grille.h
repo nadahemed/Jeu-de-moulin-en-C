@@ -9,7 +9,10 @@ void Start();
 void regles();
 void menu();
 void Board(char board[]);
+int menu_jeu();
+int getmachine();
 int getposition();
+int getmachineAI();
 void Explicationsaisie();
 
 
