@@ -5,6 +5,8 @@
 void AfficheGrille();
 void AfficheLettres();
 int startmoulin();
+void playMusic();
+void stopMusic();
 void Start();
 void regles();
 void menu();

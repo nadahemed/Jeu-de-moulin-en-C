@@ -15,6 +15,9 @@
 int getmachine() {
     int position;
     char board[taille];
+    char carac[24][3] = {"01", "02", "03", "04", "05", "06", "07", "08", "09", "10", 
+                         "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", 
+                         "21", "22", "23"};
     int joueurActuel = 1;  
     int PionRestX = MAX_PIONS;
     int PionRestO = MAX_PIONS;
@@ -91,7 +94,7 @@ int getmachine() {
             }
 
             
-            retirePionmch(board, pionAdverse);
+            retirePion(board, pionAdverse);
             (*PionRestAdverse)--;
 
             

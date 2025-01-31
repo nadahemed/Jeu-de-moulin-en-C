@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include "grille.h"
 #include "protomove.h"
+#include "flyingpahse.c"
+#include "sauvegarde.c"
 #include "estbloque.h"
 #include "estmoulin.c"
 #include "retirerpion.c"
@@ -13,6 +15,8 @@
 #define taille 24
 #define MAX_PIONS 9
 #define TIME_LIMIT 30
+#define FICHIER_SAUVEGARDE "sauvegarde.txt"
+#define TEMPS_LIMITE 30
 
 
 
@@ -138,13 +142,34 @@ int getposition() {
     int movesO = 0;
     int moulinsX = 0; // Nombre de moulins pour X
     int moulinsO = 0; // Nombre de moulins pour O
-    
+    char joueur1[50], joueur2[50]; // Variables pour stocker les noms des joueurs
 
+    // Demander si le joueur veut charger une sauvegarde
+    printf("Voulez-vous charger la partie sauvegardée ? (o/n) : ");
+    char choix;
+    scanf(" %c", &choix);
 
-
-    // Initialisation du tableau
-    for (int i = 0; i < taille; i++) {
-        board[i] ='*';
+    if (choix == 'o' || choix == 'O') {
+        if (!chargerJeu(board, &joueurActuel, &PionRestX, &PionRestO, &movesX, &movesO, &moulinsX, &moulinsO, joueur1, joueur2)) {
+            // Si le chargement échoue, initialiser une nouvelle partie
+            printf("Démarrage d'une nouvelle partie.\n");
+            for (int i = 0; i < taille; i++) {
+                board[i] = '*';
+            }
+            printf("Entrez le nom du Joueur 1 (X): ");
+            scanf("%s", joueur1);
+            printf("Entrez le nom du Joueur 2 (O): ");
+            scanf("%s", joueur2);
+        }
+    } else {
+        // Initialisation d'une nouvelle partie
+        for (int i = 0; i < taille; i++) {
+            board[i] = '*';
+        }
+        printf("Entrez le nom du Joueur 1 (X): ");
+        scanf("%s", joueur1);
+        printf("Entrez le nom du Joueur 2 (O): ");
+        scanf("%s", joueur2);
     }
 
     printf("La grille initiale est : \n");
@@ -156,42 +181,82 @@ int getposition() {
         char pionAdverse = (joueurActuel == 1) ? 'O' : 'X';
         int *PionRestAdverse = (joueurActuel == 1) ? &PionRestO : &PionRestX;
         int *currentMoves = (joueurActuel == 1) ? &movesX : &movesO;
+        char *nomJoueurActuel = (joueurActuel == 1) ? joueur1 : joueur2;
 
-        // Vérification si le joueur peut encore jouer
-        if (*currentMoves >= MAX_PIONS) {
-            printf("Joueur %d (%c) ne peut plus placer de pions.\n", joueurActuel, pionActuel);
-            joueurActuel = 3 - joueurActuel; // Alterne entre 1 et 2
+        // Début du tour : enregistrer le temps de départ
+        time_t startTime = time(NULL);
+
+        // Vérification si le joueur est en phase de vol
+        bool isFlyingPhase = (joueurActuel == 1 && PionRestX == 3) || (joueurActuel == 2 && PionRestO == 3);
+
+        if (isFlyingPhase) {
+            printf("%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.\n", nomJoueurActuel, pionActuel);
+            printf("Entrez la position actuelle du pion à déplacer (0-%d) : ", taille - 1);
+            if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+                printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                while (getchar() != '\n'); // Vider le buffer d'entrée
+                continue;
+            }
+
+            // Vérifier si la position actuelle contient un pion du joueur
+            if (board[position] != pionActuel) {
+                printf("La position actuelle ne contient pas votre pion. Veuillez réessayer.\n");
+                continue;
+            }
+
+            // Demander la nouvelle position
+            printf("Entrez la nouvelle position (0-%d) : ", taille - 1);
+            if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+                printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                while (getchar() != '\n'); // Vider le buffer d'entrée
+                continue;
+            }
+
+            // Vérifier si la nouvelle position est vide
+            if (board[position] != '*') {
+                printf("La nouvelle position est déjà occupée. Veuillez choisir une autre position.\n");
+                continue;
+            }
+
+            // Déplacer le pion
+            board[position] = pionActuel;
+        } else {
+            // Phase normale : placement d'un nouveau pion
+            printf("%s (%c), entrez une position (0-%d) : ", nomJoueurActuel, pionActuel, taille - 1);
+            if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+                printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                while (getchar() != '\n'); // Vider le buffer d'entrée
+                continue;
+            }
+
+            // Vérifie si la position est occupée
+            if (board[position] != '*') {
+                printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
+                continue;
+            }
+
+            // Placement du pion
+            board[position] = pionActuel;
+            (*currentMoves)++;
+        }
+
+        // Vérifier si le temps est dépassé
+        time_t endTime = time(NULL);
+        if (difftime(endTime, startTime) > TEMPS_LIMITE) {
+            printf("Temps écoulé ! Le tour passe à l'autre joueur.\n");
+            joueurActuel = 3 - joueurActuel; // Passer au joueur suivant
             continue;
         }
 
-        // Lecture de la position
-        printf("Joueur %d (%c), entrez une position (0-%d) : ", joueurActuel, pionActuel, taille - 1);
-        if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
-            printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
-            while (getchar() != '\n');
-            continue;
-        }
-        if (position == -1) {  // Vérifie si le joueur veut quitter
-                               printf("Joueur %d (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", joueurActuel, pionActuel);
-                               exit(0);  // Quitte immédiatement le jeu
-                    }
+        // Sauvegarder l'état du jeu après chaque tour
+        sauvegarderJeu(board, joueurActuel, PionRestX, PionRestO, movesX, movesO, moulinsX, moulinsO, joueur1, joueur2);
 
-
-        // Vérifie si la position est occupée
-        if (board[position] != '*') {
-            printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
-            continue;
-        }
-
-        // Placement du pion
-        board[position] = pionActuel;
-        (*currentMoves)++;
         Board(board);
         printf("\n");
 
         // Vérifie si un moulin est formé
         if (estMoulin(board, position, pionActuel)) {
-            printf("Moulin formé par Joueur %d (%c) !\n", joueurActuel, pionActuel);
+            printf("Moulin formé par %s (%c) !\n", nomJoueurActuel, pionActuel);
 
             // Ajoutez au compteur de moulins
             if (joueurActuel == 1) {
@@ -206,7 +271,8 @@ int getposition() {
 
             // Vérifiez si l'adversaire a moins de 3 pions
             if (*PionRestAdverse < 3) {
-                printf("Joueur %d (%c) a gagné !\n", joueurActuel, pionActuel);
+                printf("%s (%c) a gagné !\n", nomJoueurActuel, pionActuel);
+                remove(FICHIER_SAUVEGARDE); // Supprimer la sauvegarde après la fin de la partie
                 return 0;
             }
         }
@@ -216,13 +282,14 @@ int getposition() {
             printf("Les deux joueurs ont épuisé leurs mouvements.\n");
 
             if (moulinsX > moulinsO) {
-                printf("Le joueur X a gagné avec %d moulins contre %d moulins pour O.\n", moulinsX, moulinsO);
+                printf("%s (X) a gagné avec %d moulins contre %d moulins pour %s.\n", joueur1, moulinsX, moulinsO, joueur2);
             } else if (moulinsO > moulinsX) {
-                printf("Le joueur O a gagné avec %d moulins contre %d moulins pour X.\n", moulinsO, moulinsX);
+                printf("%s (O) a gagné avec %d moulins contre %d moulins pour %s.\n", joueur2, moulinsO, moulinsX, joueur1);
             } else {
                 printf("Match nul ! Les deux joueurs ont formé %d moulins.\n", moulinsX);
             }
 
+            remove(FICHIER_SAUVEGARDE); // Supprimer la sauvegarde après la fin de la partie
             return 0;
         }
 
@@ -232,6 +299,4 @@ int getposition() {
 
     return 0;
 }
-
-
 
