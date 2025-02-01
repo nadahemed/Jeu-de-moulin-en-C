@@ -89,11 +89,15 @@ int main() {
             }
             break;
         case 2:
-            printf("Vous avez quitte!!\n");
+            printf("Vous avez quitté !!\n");
+            exit(0);
             break;
         case 3:
             sleep(2);
             regles();
+            printf("Appuyez sur en touche pour revenir au menu!!");
+            getchar();
+            getchar();
             break;
         default:
             break;

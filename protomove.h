@@ -15,6 +15,8 @@ void sauvegarderJeu(char board[], int joueurActuel, int PionRestX, int PionRestO
 void flyingPhase(char board[], char pionActuel, char *nomJoueurActuel);
 bool chargerJeu(char board[], int *joueurActuel, int *PionRestX, int *PionRestO, int *movesX, int *movesO, int *moulinsX, int *moulinsO, char joueur1[], char joueur2[]);
 int estMoulinmch(char board[], int position, char pion);
+int evaluerPosition(char board[], int position, char pionActuel, char pionAdverse) ;
+int trouverMeilleurCoupVol(char board[], char pionActuel, char pionAdverse); 
 
 
 #endif
