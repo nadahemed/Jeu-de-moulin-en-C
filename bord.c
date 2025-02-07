@@ -89,21 +89,20 @@ int main() {
             }
             break;
         case 2:
+            printf(rouge);
             printf("Vous avez quitté !!\n");
+            printf(reset);
             exit(0);
             break;
         case 3:
             sleep(2);
             regles();
-            printf("Appuyez sur en touche pour revenir au menu!!");
-            getchar();
-            getchar();
             break;
         default:
             break;
     }
 
-    // Arrêter la musique avant de quitter
+
 
 
     return 0;

@@ -38,6 +38,57 @@ int estMoulinmch(char board[], int position, char pion) {
     return 0;  
 }
 
+int sontAdjacents(int pos1, int pos2) {
+    int adjacents[24][24] = {
+        // 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23
+        {0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 0
+        {1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 1
+        {0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 2
+        {0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 3
+        {0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 4
+        {0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 5
+        {0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 6
+        {0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 7
+        {0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 8
+        {1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 9
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, // 10
+        {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0}, // 11
+        {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0}, // 12
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0}, // 13
+        {0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0}, // 14
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0}, // 15
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1}, // 16
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0}, // 17
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, // 18
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0}, // 19
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0}, // 20
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0}, // 21
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1}, // 22
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0}  // 23
+    };
+
+    
+    return adjacents[pos1][pos2];
+}
+
+
+
+int compterCoupsPossibles(char board[], char pion) {
+    int count = 0;
+    for (int i = 0; i < taille; i++) {
+        if (board[i] == pion) {
+            for (int j = 0; j < taille; j++) {
+                if (board[j] == '*' && sontAdjacents(i, j)) {
+                    count++;
+                }
+            }
+        }
+    }
+    return count;
+}
+
+
+
 
 int evaluer_position(int position, char pion) {
     
@@ -115,34 +166,43 @@ int estMoulinPotentiel(char board[], int position, char pion) {
 
 int evaluer_plateau(char board[], char pionMachine, char pionAdverse) {
     int score = 0;
-    int i;
 
-    for (i = 0; i < taille; i++) {
+    // Bonus pour les moulins complets
+    for (int i = 0; i < taille; i++) {
         if (estMoulin(board, i, pionMachine)) {
-            score += 20;  // Bonus pour un moulin complet
+            score += 20;
         }
         if (estMoulin(board, i, pionAdverse)) {
-            score -= 20;  // Pénalité pour un moulin adverse
+            score -= 20;
         }
+    }
 
+    // Bonus pour les moulins potentiels
+    for (int i = 0; i < taille; i++) {
         int moulinPotentielMachine = estMoulinPotentiel(board, i, pionMachine);
         if (moulinPotentielMachine != -1) {
-            score += 10;  // Bonus pour un moulin potentiel
+            score += 10;
         }
 
         int moulinPotentielAdverse = estMoulinPotentiel(board, i, pionAdverse);
         if (moulinPotentielAdverse != -1) {
-            score -= 10;  // Pénalité pour un moulin potentiel adverse
+            score -= 10;
         }
     }
 
-    for (i = 0; i < taille; i++) {
+    // Bonus pour les positions stratégiques
+    for (int i = 0; i < taille; i++) {
         if (board[i] == pionMachine) {
-            score += evaluer_position(i, pionMachine);  
+            score += evaluer_position(i, pionMachine);
         } else if (board[i] == pionAdverse) {
-            score -= evaluer_position(i, pionAdverse);  
+            score -= evaluer_position(i, pionAdverse);
         }
     }
+
+    // Bonus pour la mobilité des pions
+    int mobiliteMachine = compterCoupsPossibles(board, pionMachine);
+    int mobiliteAdverse = compterCoupsPossibles(board, pionAdverse);
+    score += (mobiliteMachine - mobiliteAdverse) * 2;
 
     return score;
 }

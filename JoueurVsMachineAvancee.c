@@ -11,9 +11,6 @@
 #define MAX_PIONS 9
 #define FICHIER_SAUVEGARDE1 "fichierAI.txt"
 
-
-
-
 int getmachineAI() {
     const char *rouge = "\033[1;31m"; 
     const char *vert = "\033[1;32m";
@@ -33,9 +30,13 @@ int getmachineAI() {
     char nomJoueur[50]; // Nom du joueur humain
     bool quitter = false; // Drapeau pour indiquer si le joueur a quitté
 
+    // Initialiser le générateur de nombres aléatoires
+    srand(time(NULL));
+
     // Demander si le joueur veut charger une sauvegarde
     printf(rouge);
     printf("Voulez-vous charger la partie sauvegardée ? (o/n) : ");
+    printf(reset);
     char choix;
     scanf(" %c", &choix);
 
@@ -44,10 +45,13 @@ int getmachineAI() {
             // Si le chargement échoue, initialiser une nouvelle partie
             printf(rouge);
             printf("Démarrage d'une nouvelle partie.\n");
+            printf(reset);
             for (int i = 0; i < taille; i++) {
                 board[i] = '*';
             }
+            printf(rouge);
             printf("Entrez votre nom : ");
+            printf(reset);
             scanf("%s", nomJoueur);
         }
     } else {
@@ -57,12 +61,35 @@ int getmachineAI() {
         }
         printf(bleu);
         printf("Entrez votre nom : ");
-        scanf("%s", nomJoueur);
         printf(reset);
+        scanf("%s", nomJoueur);
+
+        // Demander si le joueur veut choisir aléatoirement qui commence
+        printf(bleu);
+        printf("Voulez-vous que le premier joueur soit choisi aléatoirement ? (o/n) : ");
+        printf(reset);
+        char choixCommence;
+        scanf(" %c", &choixCommence);
+
+        if (choixCommence == 'o' || choixCommence == 'O') {
+            // Choisir aléatoirement qui commence
+            joueurActuel = (rand() % 2) + 1; // 1 ou 2
+            printf(rouge);
+            printf("Le joueur %d (%s) commence.\n", joueurActuel, (joueurActuel == 1) ? nomJoueur : "la machine");
+            printf(reset);
+        } else {
+            // Par défaut, le joueur humain commence
+            joueurActuel = 1;
+            printf(rouge);
+            printf("Vous commencez la partie.\n");
+            printf(reset);
+        }
     }
 
     // Afficher la grille initiale
+    printf(bleu);
     printf("La grille initiale est : \n");
+    printf(reset);
     Board(board);
     printf("\n");
 
@@ -78,59 +105,81 @@ int getmachineAI() {
         // Tour du joueur humain
         if (joueurActuel == 1) {
             if (isFlyingPhase) {
+                printf(rouge);
                 printf("%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.\n", nomJoueur, pionActuel);
                 printf("Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : ", taille - 1);
+                printf(reset);
                 if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+                    printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
+                    printf(reset);
                     while (getchar() != '\n');
                     continue;
                 }
 
                 if (position == -1) {
+                    printf(rouge);
                     printf("%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", nomJoueur, pionActuel);
+                    printf(reset);
                     quitter = true;
                     break;
                 }
 
                 // Vérifier si la position actuelle contient un pion du joueur
                 if (board[position] != pionActuel) {
+                    printf(rouge);
                     printf("La position actuelle ne contient pas votre pion. Veuillez réessayer.\n");
+                    printf(reset);
                     continue;
                 }
 
                 // Demander la nouvelle position
+                printf(rouge);
                 printf("Entrez la nouvelle position (0-%d) : ", taille - 1);
+                printf(reset);
                 if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+                    printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                    printf(reset);
                     while (getchar() != '\n');
                     continue;
                 }
 
                 // Vérifier si la nouvelle position est vide
                 if (board[position] != '*') {
+                    printf(rouge);
                     printf("La nouvelle position est déjà occupée. Veuillez choisir une autre position.\n");
+                    printf(reset);
                     continue;
                 }
 
                 // Déplacer le pion
                 board[position] = pionActuel;
             } else {
+                printf(rouge);
                 printf("%s (%c), entrez une position (0-%d) ou -1 pour quitter : ", nomJoueur, pionActuel, taille - 1);
+                printf(reset);
                 if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+                    printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
+                    printf(reset);
                     while (getchar() != '\n');
                     continue;
                 }
 
                 if (position == -1) {
+                    printf(rouge);
                     printf("%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", nomJoueur, pionActuel);
+                    printf(reset);
                     quitter = true;
                     break;
                 }
 
                 // Vérifier si la position est libre
                 if (board[position] != '*') {
+                    printf(rouge);
                     printf("La position est déjà occupée. Veuillez choisir une autre position.\n");
+                    printf(reset);
                     continue;
                 }
 
@@ -143,10 +192,14 @@ int getmachineAI() {
         else {
             if (isFlyingPhase) {
                 position = trouverMeilleurCoupVol(board, pionActuel, pionAdverse);
+                printf(bleu);
                 printf("La machine (%c) déplace un pion vers la position %d.\n", pionActuel, position);
+                printf(reset);
             } else {
                 position = trouverMeilleurCoup(board, pionActuel, pionAdverse);
+                printf(bleu);
                 printf("La machine (%c) choisit la position %d.\n", pionActuel, position);
+                printf(reset);
             }
 
             // Placer le pion
@@ -160,7 +213,9 @@ int getmachineAI() {
 
         // Vérifier si un moulin est formé
         if (estMoulin(board, position, pionActuel)) {
+            printf(rouge);
             printf("Moulin formé par %s (%c) !\n", (joueurActuel == 1) ? nomJoueur : "La machine", pionActuel);
+            printf(reset);
 
             // Mettre à jour le compteur de moulins
             if (joueurActuel == 1) {
@@ -173,31 +228,43 @@ int getmachineAI() {
             if (joueurActuel == 1) {
                 int posAdverse;
                 while (true) {
+                    printf(rouge);
                     printf("Choisissez une position de la machine (%c) à retirer : ", pionAdverse);
+                    printf(reset);
                     if (scanf("%d", &posAdverse) != 1 || posAdverse < 0 || posAdverse >= taille) {
+                        printf(rouge);
                         printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                        printf(reset);
                         while (getchar() != '\n');
                         continue;
                     }
 
                     if (board[posAdverse] == pionAdverse) {
                         board[posAdverse] = '*';
+                        printf(rouge);
                         printf("Pion de la machine retiré à la position %d.\n", posAdverse);
+                        printf(reset);
                         (*PionRestAdverse)--;
                         break;
                     } else {
+                        printf(rouge);
                         printf("La position choisie n'est pas occupée par un pion adverse.\n");
+                        printf(reset);
                     }
                 }
             } else {
+                printf(bleu);
                 printf("La machine (%c) retire un pion adverse.\n", pionActuel);
+                printf(reset);
                 retirePionmch(board, pionAdverse);
                 (*PionRestAdverse)--;
             }
 
             // Vérifier si l'adversaire a moins de 3 pions
             if (*PionRestAdverse < 3) {
+                printf(rouge);
                 printf("%s (%c) a gagné !\n", (joueurActuel == 1) ? nomJoueur : "La machine", pionActuel);
+                printf(reset);
                 remove(FICHIER_SAUVEGARDE1); // Supprimer la sauvegarde après la fin de la partie
                 return 0;
             }
@@ -205,14 +272,22 @@ int getmachineAI() {
 
         // Vérifier si les deux joueurs ont épuisé leurs mouvements
         if (movesX >= MAX_PIONS && movesO >= MAX_PIONS) {
+            printf(rouge);
             printf("Les deux joueurs ont épuisé leurs mouvements.\n");
+            printf(reset);
 
             if (moulinsX > moulinsO) {
+                printf(rouge);
                 printf("%s (X) a gagné avec %d moulins contre %d moulins pour O.\n", nomJoueur, moulinsX, moulinsO);
+                printf(reset);
             } else if (moulinsO > moulinsX) {
+                printf(bleu);
                 printf("La machine (O) a gagné avec %d moulins contre %d moulins pour X.\n", moulinsO, moulinsX);
+                printf(reset);
             } else {
+                printf(rouge);
                 printf("Match nul ! Les deux joueurs ont formé %d moulins.\n", moulinsX);
+                printf(reset);
             }
 
             remove(FICHIER_SAUVEGARDE1); // Supprimer la sauvegarde après la fin de la partie

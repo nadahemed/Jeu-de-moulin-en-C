@@ -132,6 +132,7 @@ void Board(char board[]){
 }
 
 
+
 int getposition() {
     int position;
     char board[taille];
@@ -299,4 +300,3 @@ int getposition() {
 
     return 0;
 }
-
