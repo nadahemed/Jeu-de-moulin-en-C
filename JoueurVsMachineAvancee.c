@@ -10,6 +10,7 @@
 #define taille 24
 #define MAX_PIONS 9
 #define FICHIER_SAUVEGARDE1 "fichierAI.txt"
+#define TIME_LIMIT 30 // Temps limite en secondes
 
 int getmachineAI() {
     const char *rouge = "\033[1;31m"; 
@@ -109,7 +110,22 @@ int getmachineAI() {
                 printf("%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.\n", nomJoueur, pionActuel);
                 printf("Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : ", taille - 1);
                 printf(reset);
-                if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf(rouge);
+                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
+                    printf(reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
                     printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
                     printf(reset);
@@ -137,7 +153,22 @@ int getmachineAI() {
                 printf(rouge);
                 printf("Entrez la nouvelle position (0-%d) : ", taille - 1);
                 printf(reset);
-                if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+
+                // Mesurer le temps
+                debut = time(NULL);
+                result = scanf("%d", &position);
+                fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf(rouge);
+                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
+                    printf(reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < 0 || position >= taille) {
                     printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
                     printf(reset);
@@ -159,7 +190,22 @@ int getmachineAI() {
                 printf(rouge);
                 printf("%s (%c), entrez une position (0-%d) ou -1 pour quitter : ", nomJoueur, pionActuel, taille - 1);
                 printf(reset);
-                if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf(rouge);
+                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
+                    printf(reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
                     printf(rouge);
                     printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
                     printf(reset);
@@ -303,8 +349,3 @@ int getmachineAI() {
 
     return 0;
 }
-
-
-
-
-

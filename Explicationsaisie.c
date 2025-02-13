@@ -24,29 +24,36 @@ printf("| (____/\\( /   \\ )| )      | (____/\\___) (___| (____/\\| )   ( |   | 
 printf("(_______/|/     \\||/       (_______/\\_______/(_______/|/     \\|   )_(   \\_______/(_______)|/    )_)\n");
 printf(reset);
 printf(bleu);
+
 printf("_________________________________________________________________________________\n");
-printf(reset);
-sleep(1);
-printf(bleu);
-printf("/                                                                                |\n");
-printf("|                                                                                |\n");
-printf("|                                                                                |\n");
-sleep(0.5);
-printf(reset);
-printf(rouge);
-sleep(1);
-printf("|              Vous entrez le nombre entre(0-23)                                 |\n");
-printf(reset);
-sleep(1);
-printf(rouge);
-printf("|              après choisir le pion soit X soit Y                               |\n");
-printf(reset);
-sleep(1);
-printf(bleu);
-printf("|                                                                                |\n");
-printf("|                                                                                |\n");
-printf("|________________________________________________________________________________|\n");
-printf(reset);
+    printf(reset);
+    sleep(1);
+
+    printf(bleu);
+    printf("/                                                                                |\n");
+    printf("|                                                                                |\n");
+    printf("|                                                                                |\n");
+    sleep(0.5);
+
+    printf(reset);
+    printf(rouge);
+    sleep(1);
+    printf("|              Vous entrez le nombre entre (0-23)                                |\n");
+    
+    printf(reset);
+    sleep(1);
+    printf(rouge);
+    printf("|              Après, choisissez le pion soit X soit O                          |\n");
+
+    printf(reset);
+    sleep(1);
+    printf(bleu);
+    printf("|                                                                                |\n");
+    printf("|                                                                                |\n");
+    printf("|________________________________________________________________________________|\n");
+
+    printf(reset);
+    
 
 
 

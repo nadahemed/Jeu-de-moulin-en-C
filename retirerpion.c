@@ -14,6 +14,10 @@ void retirePion(char board[], char pionAdverse) {
             printf("Aucun pion adverse à cette position. Réessayez.\n");
             continue;
         }
+        if (estMoulin(board, position, pionAdverse)) {
+            printf("Vous ne pouvez pas retirer un pion faisant partie d'un moulin. Veuillez choisir un autre pion.\n");
+            continue;
+        }
         board[position] = '*'; 
         Board(board);
         printf("\n");

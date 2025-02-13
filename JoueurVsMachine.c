@@ -8,6 +8,7 @@
 #include <time.h>
 #define FICHIER_SAUVEGARDE2 "fichiermch.txt"
 #define taille 24
+#define TIME_LIMIT 30
 #define MAX_PIONS 9
 
 int getmachine() {
@@ -26,6 +27,11 @@ int getmachine() {
     char nomJoueur[50]; // Nom du joueur humain
     bool quitter = false; // Drapeau pour indiquer si le joueur a quitté
 
+    // Initialisation du plateau
+    for (int i = 0; i < taille; i++) {
+        board[i] = '*';
+    }
+
     // Demander si le joueur veut charger une sauvegarde
     printf("%sVoulez-vous charger la partie sauvegardée ? (o/n) : %s", rouge, reset);
     char choix;
@@ -33,19 +39,11 @@ int getmachine() {
 
     if (choix == 'o' || choix == 'O') {
         if (!chargerJeumch1(board, &joueurActuel, &PionRestX, &PionRestO, &movesX, &movesO, &moulinsX, &moulinsO, nomJoueur)) {
-            // Si le chargement échoue, initialiser une nouvelle partie
             printf("%sDémarrage d'une nouvelle partie.%s\n", rouge, reset);
-            for (int i = 0; i < taille; i++) {
-                board[i] = '*';
-            }
             printf("%sEntrez votre nom : %s", rouge, reset);
             scanf("%s", nomJoueur);
         }
     } else {
-        // Initialisation d'une nouvelle partie
-        for (int i = 0; i < taille; i++) {
-            board[i] = '*';
-        }
         printf("%sEntrez votre nom : %s", rouge, reset);
         scanf("%s", nomJoueur);
     }
@@ -55,6 +53,7 @@ int getmachine() {
     Board(board);
     printf("\n");
 
+    // Boucle principale du jeu
     while (!quitter) {
         char pionActuel = (joueurActuel == 1) ? 'X' : 'O';
         char pionAdverse = (joueurActuel == 1) ? 'O' : 'X';
@@ -69,7 +68,20 @@ int getmachine() {
             if (isFlyingPhase) {
                 printf("%s%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.%s\n", rouge, nomJoueur, pionActuel, reset);
                 printf("%sEntrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : %s", rouge, taille - 1, reset);
-                if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf("%sTemps écoulé ! Vous avez dépassé le temps limite de %d secondes.%s\n", rouge, TIME_LIMIT, reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
                     printf("%sPosition invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.%s\n", rouge, taille - 1, reset);
                     while (getchar() != '\n');
                     continue;
@@ -89,23 +101,51 @@ int getmachine() {
 
                 // Demander la nouvelle position
                 printf("%sEntrez la nouvelle position (0-%d) : %s", rouge, taille - 1, reset);
-                if (scanf("%d", &position) != 1 || position < 0 || position >= taille) {
+
+                // Mesurer le temps
+                debut = time(NULL);
+                int nouvellePosition;
+                result = scanf("%d", &nouvellePosition);
+                fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf("%sTemps écoulé ! Vous avez dépassé le temps limite de %d secondes.%s\n", rouge, TIME_LIMIT, reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || nouvellePosition < 0 || nouvellePosition >= taille) {
                     printf("%sPosition invalide. Veuillez entrer un nombre entre 0 et %d.%s\n", rouge, taille - 1, reset);
                     while (getchar() != '\n');
                     continue;
                 }
 
                 // Vérifier si la nouvelle position est vide
-                if (board[position] != '*') {
+                if (board[nouvellePosition] != '*') {
                     printf("%sLa nouvelle position est déjà occupée. Veuillez choisir une autre position.%s\n", rouge, reset);
                     continue;
                 }
 
                 // Déplacer le pion
-                board[position] = pionActuel;
+                board[position] = '*';
+                board[nouvellePosition] = pionActuel;
             } else {
                 printf("%s%s (%c), entrez une position (0-%d) ou -1 pour quitter : %s", rouge, nomJoueur, pionActuel, taille - 1, reset);
-                if (scanf("%d", &position) != 1 || position < -1 || position >= taille) {
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf("%sTemps écoulé ! Vous avez dépassé le temps limite de %d secondes.%s\n", rouge, TIME_LIMIT, reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
                     printf("%sPosition invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.%s\n", rouge, taille - 1, reset);
                     while (getchar() != '\n');
                     continue;
@@ -128,34 +168,33 @@ int getmachine() {
                 (*currentMoves)++;
             }
         }
-        // Tour de la machine (joueur 2)
+        // Tour de la machine
         else {
             if (isFlyingPhase) {
                 // Phase de vol : déplacer un pion existant
                 do {
                     position = rand() % taille; // Choisir une position aléatoire
                 } while (board[position] != pionActuel); // Trouver un pion de la machine
-                printf("%sLa machine (%c) déplace un pion de la position %d.%s\n", bleu, pionActuel, position, reset);
 
                 int nouvellePosition;
                 do {
                     nouvellePosition = rand() % taille; // Choisir une nouvelle position aléatoire
                 } while (board[nouvellePosition] != '*'); // Trouver une position vide
-                printf("%sLa machine (%c) déplace le pion vers la position %d.%s\n", bleu, pionActuel, nouvellePosition, reset);
 
                 // Déplacer le pion
                 board[position] = '*';
                 board[nouvellePosition] = pionActuel;
+                printf("%sLa machine (%c) déplace un pion de %d à %d.%s\n", bleu, pionActuel, position, nouvellePosition, reset);
             } else {
                 // Phase normale : placer un nouveau pion
                 do {
                     position = rand() % taille; // Choisir une position aléatoire
                 } while (board[position] != '*'); // Trouver une position vide
-                printf("%sLa machine (%c) choisit la position %d.%s\n", bleu, pionActuel, position, reset);
 
                 // Placer le pion
                 board[position] = pionActuel;
                 (*currentMoves)++;
+                printf("%sLa machine (%c) choisit la position %d.%s\n", bleu, pionActuel, position, reset);
             }
         }
 
@@ -212,21 +251,6 @@ int getmachine() {
             }
         }
 
-        // Vérifier si les deux joueurs ont épuisé leurs mouvements
-        if (movesX >= MAX_PIONS && movesO >= MAX_PIONS) {
-            printf("%sLes deux joueurs ont épuisé leurs mouvements.%s\n", rouge, reset);
-
-            if (moulinsX > moulinsO) {
-                printf("%s%s (X) a gagné avec %d moulins contre %d moulins pour O.%s\n", rouge, nomJoueur, moulinsX, moulinsO, reset);
-            } else if (moulinsO > moulinsX) {
-                printf("%sLa machine (O) a gagné avec %d moulins contre %d moulins pour X.%s\n", bleu, moulinsO, moulinsX, reset);
-            } else {
-                printf("%sMatch nul ! Les deux joueurs ont formé %d moulins.%s\n", rouge, moulinsX, reset);
-            }
-
-            return 0;
-        }
-
         // Sauvegarder l'état du jeu après chaque tour
         sauvegarderJeumch1(board, joueurActuel, PionRestX, PionRestO, movesX, movesO, moulinsX, moulinsO, nomJoueur);
 
@@ -236,7 +260,6 @@ int getmachine() {
 
     return 0;
 }
-
 
 
 

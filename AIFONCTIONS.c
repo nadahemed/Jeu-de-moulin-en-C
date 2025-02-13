@@ -8,14 +8,17 @@
 
 
 void retirePionmch(char board[], char pionAdverse) {
+    // Parcourir toutes les positions pour trouver un pion adverse qui ne fait pas partie d'un moulin
     for (int i = 0; i < taille; i++) {
-        if (board[i] == pionAdverse && !estMoulin(board, i, pionAdverse)) {
+        if (board[i] == pionAdverse && !estMoulinmch(board, i, pionAdverse)) {
             board[i] = '*';  // Retire le pion
             printf("Pion adverse retiré à la position %d.\n", i);
             return;
         }
     }
-    printf("Aucun pion à retirer.\n");
+
+    // Si aucun pion ne peut être retiré (tous les pions adverses font partie de moulins)
+    printf("Aucun pion à retirer (tous les pions adverses font partie de moulins).\n");
 }
 
 

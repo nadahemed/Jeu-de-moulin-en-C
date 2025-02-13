@@ -21,7 +21,6 @@ int menu_jeu() {
     printf("                                           |__/            \n");
     printf(reset);
     printf(bleu);
-    printf("Entrez votre choix :\n");
     
     
 }
