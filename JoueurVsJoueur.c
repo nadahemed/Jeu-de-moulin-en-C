@@ -196,7 +196,7 @@ int getposition() {
     } else {
         // Initialisation d'une nouvelle partie
         for (int i = 0; i < taille; i++) {
-            board[i] = "**";
+            board[i] = '*';
         }
         printf("Entrez le nom du Joueur 1 (X): ");
         scanf("%s", joueur1);
