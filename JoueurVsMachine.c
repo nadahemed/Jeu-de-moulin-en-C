@@ -33,6 +33,41 @@ int getmachine() {
         board[i] = '*';
     }
 
+    // Demander le nom du joueur humain
+    printf("%sEntrez votre nom : %s", rouge, reset);
+    scanf("%s", nomJoueur);
+
+    // Demander qui commence la partie
+    printf("%sChoisissez qui commence la partie :%s\n", rouge, reset);
+    printf("%s1. %s (X) commence%s\n", rouge, nomJoueur, reset);
+    printf("%s2. La machine (O) commence%s\n", bleu, reset);
+    printf("%s3. Choix aléatoire%s\n", rouge, reset);
+    printf("%sVotre choix (1, 2 ou 3) : %s", rouge, reset);
+
+    int choixCommence;
+    scanf("%d", &choixCommence);
+
+    if (choixCommence == 3) {
+        // Choix aléatoire
+        srand(time(NULL)); // Initialiser le générateur de nombres aléatoires
+        int randomChoice = rand() % 2; // Génère 0 ou 1
+        if (randomChoice == 0) {
+            joueurActuel = 1; // Le joueur humain commence
+            printf("%sLe choix aléatoire a décidé que %s (X) commence.%s\n", rouge, nomJoueur, reset);
+        } else {
+            joueurActuel = 2; // La machine commence
+            printf("%sLe choix aléatoire a décidé que la machine (O) commence.%s\n", bleu, reset);
+        }
+    } else if (choixCommence == 1) {
+        joueurActuel = 1; // Le joueur humain commence
+        printf("%s%s (X) commence la partie.%s\n", rouge, nomJoueur, reset);
+    } else if (choixCommence == 2) {
+        joueurActuel = 2; // La machine commence
+        printf("%sLa machine (O) commence la partie.%s\n", bleu, reset);
+    } else {
+        printf("%sChoix invalide. Par défaut, %s (X) commence.%s\n", rouge, nomJoueur, reset);
+    }
+
     // Demander le mode de jeu
     printf("%sChoisissez le mode de jeu :%s\n", rouge, reset);
     printf("%s1. Mode Match Nul (pas de déplacement après placement des pions)%s\n", rouge, reset);
@@ -55,12 +90,7 @@ int getmachine() {
     if (choix == 'o' || choix == 'O') {
         if (!chargerJeumch1(board, &joueurActuel, &PionRestX, &PionRestO, &movesX, &movesO, &moulinsX, &moulinsO, nomJoueur)) {
             printf("%sDémarrage d'une nouvelle partie.%s\n", rouge, reset);
-            printf("%sEntrez votre nom : %s", rouge, reset);
-            scanf("%s", nomJoueur);
         }
-    } else {
-        printf("%sEntrez votre nom : %s", rouge, reset);
-        scanf("%s", nomJoueur);
     }
 
     // Afficher la grille initiale

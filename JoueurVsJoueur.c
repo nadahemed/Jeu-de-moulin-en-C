@@ -163,7 +163,7 @@ void Board(char board[]){
 int getposition() {
     int position;
     char board[taille];
-    int joueurActuel = 1;
+    int joueurActuel = 1; // Par défaut, le joueur X commence
     const char *rouge = "\033[1;31m"; 
     const char *bleu = "\033[1;34m"; 
     const char *reset = "\033[0m"; 
@@ -181,6 +181,63 @@ int getposition() {
         board[i] = '*';
     }
 
+    // Demander les noms des joueurs
+    printf(bleu);
+    printf("Entrez le nom du Joueur 1 (X): ");
+    printf(reset);
+    scanf("%s", joueur1);
+    printf(rouge);
+    printf("Entrez le nom du Joueur 2 (O): ");
+    printf(reset);
+    scanf("%s", joueur2);
+
+    // Demander qui commence la partie
+    printf("Choisissez qui commence la partie :\n");
+    printf(bleu);
+    printf("1. %s (X) commence\n", joueur1);
+    printf(reset);
+    printf(rouge);
+    printf("2. %s (O) commence\n", joueur2);
+    printf(reset);
+    printf("3. Choix aléatoire\n");
+    printf(rouge);
+    printf("Votre choix (1, 2 ou 3) : ");
+    printf(reset);
+
+    int choixCommence;
+    scanf("%d", &choixCommence);
+
+    if (choixCommence == 3) {
+        // Choix aléatoire
+        srand(time(NULL)); // Initialiser le générateur de nombres aléatoires
+        int randomChoice = rand() % 2; // Génère 0 ou 1
+        if (randomChoice == 0) {
+            joueurActuel = 1; // X commence
+            printf(bleu);
+            printf("Le choix aléatoire a décidé que %s (X) commence.\n", joueur1);
+            printf(reset);
+        } else {
+            joueurActuel = 2; // O commence
+            printf(rouge);
+            printf("Le choix aléatoire a décidé que %s (O) commence.\n", joueur2);
+            printf(reset);
+        }
+    } else if (choixCommence == 1) {
+        joueurActuel = 1; // X commence
+        printf(bleu);
+        printf("%s (X) commence la partie.\n", joueur1);
+        printf(reset);
+    } else if (choixCommence == 2) {
+        joueurActuel = 2; // O commence
+        printf(rouge);
+        printf("%s (O) commence la partie.\n", joueur2);
+        printf(reset);
+    } else {
+        printf(rouge);
+        printf("Choix invalide. Par défaut, %s (X) commence.\n", joueur1);
+        printf(reset);
+    }
+
     // Demander le mode de jeu
     printf("Choisissez le mode de jeu :\n");
     printf(bleu);
@@ -190,6 +247,7 @@ int getposition() {
     printf("2. Mode Déplacement (déplacement des pions après placement)\n");
     printf(reset);
     printf("3. Choix aléatoire\n"); // Nouvelle option
+    printf(rouge);
     printf("Votre choix (1, 2 ou 3) : ");
     printf(reset);
     int choixMode;
@@ -199,7 +257,9 @@ int getposition() {
         // Choix aléatoire
         srand(time(NULL));
         choixMode = rand() % 2 + 1; // Génère 1 ou 2
+        printf(rouge);
         printf("Le mode de jeu choisi aléatoirement est : %d\n", choixMode);
+        printf(reset);
     }
 
     if (choixMode == 2) {
@@ -225,24 +285,7 @@ int getposition() {
             printf(bleu);
             printf("Démarrage d'une nouvelle partie.\n");
             printf(reset);
-            printf(bleu);
-            printf("Entrez le nom du Joueur 1 (X): ");
-            printf(reset);
-            scanf("%s", joueur1);
-            printf(rouge);
-            printf("Entrez le nom du Joueur 2 (O): ");
-            printf(reset);
-            scanf("%s", joueur2);
         }
-    } else {
-        printf(bleu);
-        printf("Entrez le nom du Joueur 1 (X): ");
-        printf(reset);
-        scanf("%s", joueur1);
-        printf(bleu);
-        printf("Entrez le nom du Joueur 2 (O): ");
-        printf(reset);
-        scanf("%s", joueur2);
     }
 
     printf(bleu);
@@ -276,6 +319,7 @@ int getposition() {
             } else {
                 printf(rouge);
             }
+            
             printf("%s (%c), vous pouvez déplacer un pion. Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : ", nomJoueurActuel, pionActuel, taille - 1);
             printf(reset);
 
