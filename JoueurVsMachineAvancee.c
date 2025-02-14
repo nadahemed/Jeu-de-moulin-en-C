@@ -30,9 +30,33 @@ int getmachineAI() {
     int moulinsO = 0;
     char nomJoueur[50]; // Nom du joueur humain
     bool quitter = false; // Drapeau pour indiquer si le joueur a quitté
+    bool enableDisplacement = false; // Mode de déplacement activé ou désactivé
 
     // Initialiser le générateur de nombres aléatoires
     srand(time(NULL));
+
+    // Demander le mode de jeu
+    printf("Choisissez le mode de jeu :\n");
+    printf(bleu);
+    printf("1. Mode Match Nul (pas de déplacement après placement des pions)\n");
+    printf(reset);
+    printf(rouge);
+    printf("2. Mode Déplacement (déplacement des pions après placement)\n");
+    printf(reset);
+    printf("Votre choix (1 ou 2) : ");
+    printf(reset);
+    int choixMode;
+    scanf("%d", &choixMode);
+    if (choixMode == 2) {
+        enableDisplacement = true;
+        printf(bleu);
+        printf("Mode Déplacement activé.\n");
+        printf(reset);
+    } else {
+        printf(rouge);
+        printf("Mode Match Nul activé.\n");
+        printf(reset);
+    }
 
     // Demander si le joueur veut charger une sauvegarde
     printf(rouge);
@@ -100,94 +124,22 @@ int getmachineAI() {
         int *PionRestAdverse = (joueurActuel == 1) ? &PionRestO : &PionRestX;
         int *currentMoves = (joueurActuel == 1) ? &movesX : &movesO;
 
-        // Vérifier si le joueur actuel est en phase de vol
-        bool isFlyingPhase = (joueurActuel == 1 && PionRestX == 3) || (joueurActuel == 2 && PionRestO == 3);
+        // Afficher les pions restants
+        printf(bleu);
+        printf("%s (X) : %d pions restants\n", nomJoueur, PionRestX);
+        printf(reset);
+        printf(rouge);
+        printf("Machine (O) : %d pions restants\n", PionRestO);
+        printf(reset);
+
+        // Vérification si tous les pions ont été placés
+        bool isPlacementPhase = (movesX < MAX_PIONS || movesO < MAX_PIONS);
 
         // Tour du joueur humain
         if (joueurActuel == 1) {
-            if (isFlyingPhase) {
-                printf(rouge);
-                printf("%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.\n", nomJoueur, pionActuel);
-                printf("Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : ", taille - 1);
-                printf(reset);
-
-                // Mesurer le temps
-                time_t debut = time(NULL);
-                int result = scanf("%d", &position);
-                time_t fin = time(NULL);
-
-                // Vérifier si le temps est dépassé
-                if (difftime(fin, debut) > TIME_LIMIT) {
-                    printf(rouge);
-                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
-                    printf(reset);
-                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
-                    continue;
-                }
-
-                if (result != 1 || position < -1 || position >= taille) {
-                    printf(rouge);
-                    printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
-                    printf(reset);
-                    while (getchar() != '\n');
-                    continue;
-                }
-
-                if (position == -1) {
-                    printf(rouge);
-                    printf("%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", nomJoueur, pionActuel);
-                    printf(reset);
-                    quitter = true;
-                    break;
-                }
-
-                // Vérifier si la position actuelle contient un pion du joueur
-                if (board[position] != pionActuel) {
-                    printf(rouge);
-                    printf("La position actuelle ne contient pas votre pion. Veuillez réessayer.\n");
-                    printf(reset);
-                    continue;
-                }
-
-                // Demander la nouvelle position
-                printf(rouge);
-                printf("Entrez la nouvelle position (0-%d) : ", taille - 1);
-                printf(reset);
-
-                // Mesurer le temps
-                debut = time(NULL);
-                result = scanf("%d", &position);
-                fin = time(NULL);
-
-                // Vérifier si le temps est dépassé
-                if (difftime(fin, debut) > TIME_LIMIT) {
-                    printf(rouge);
-                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
-                    printf(reset);
-                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
-                    continue;
-                }
-
-                if (result != 1 || position < 0 || position >= taille) {
-                    printf(rouge);
-                    printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
-                    printf(reset);
-                    while (getchar() != '\n');
-                    continue;
-                }
-
-                // Vérifier si la nouvelle position est vide
-                if (board[position] != '*') {
-                    printf(rouge);
-                    printf("La nouvelle position est déjà occupée. Veuillez choisir une autre position.\n");
-                    printf(reset);
-                    continue;
-                }
-
-                // Déplacer le pion
-                board[position] = pionActuel;
-            } else {
-                printf(rouge);
+            if (isPlacementPhase) {
+                // Phase de placement
+                printf(bleu);
                 printf("%s (%c), entrez une position (0-%d) ou -1 pour quitter : ", nomJoueur, pionActuel, taille - 1);
                 printf(reset);
 
@@ -232,25 +184,123 @@ int getmachineAI() {
                 // Placer le pion
                 board[position] = pionActuel;
                 (*currentMoves)++;
+                PionRestX--;
+            } else if (enableDisplacement) {
+                // Phase de déplacement
+                printf(bleu);
+                printf("%s (%c), vous pouvez déplacer un pion. Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : ", nomJoueur, pionActuel, taille - 1);
+                printf(reset);
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf(rouge);
+                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
+                    printf(reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
+                    printf(rouge);
+                    printf("Position invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.\n", taille - 1);
+                    printf(reset);
+                    while (getchar() != '\n');
+                    continue;
+                }
+
+                if (position == -1) {
+                    printf(rouge);
+                    printf("%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !\n", nomJoueur, pionActuel);
+                    printf(reset);
+                    quitter = true;
+                    break;
+                }
+
+                // Vérifier si la position actuelle contient un pion du joueur
+                if (board[position] != pionActuel) {
+                    printf(rouge);
+                    printf("La position actuelle ne contient pas votre pion. Veuillez réessayer.\n");
+                    printf(reset);
+                    continue;
+                }
+
+                // Demander la nouvelle position
+                printf(bleu);
+                printf("Entrez la nouvelle position (0-%d) : ", taille - 1);
+                printf(reset);
+
+                // Mesurer le temps
+                debut = time(NULL);
+                result = scanf("%d", &position);
+                fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf(rouge);
+                    printf("Temps écoulé ! Vous avez dépassé le temps limite de %d secondes.\n", TIME_LIMIT);
+                    printf(reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < 0 || position >= taille) {
+                    printf(rouge);
+                    printf("Position invalide. Veuillez entrer un nombre entre 0 et %d.\n", taille - 1);
+                    printf(reset);
+                    while (getchar() != '\n');
+                    continue;
+                }
+
+                // Vérifier si la nouvelle position est vide
+                if (board[position] != '*') {
+                    printf(rouge);
+                    printf("La nouvelle position est déjà occupée. Veuillez choisir une autre position.\n");
+                    printf(reset);
+                    continue;
+                }
+
+                // Déplacer le pion
+                board[position] = pionActuel;
+            } else {
+                // Mode Match Nul : aucun déplacement possible
+                printf(bleu);
+                printf("%s (%c), vous ne pouvez pas déplacer de pion. Attendez la fin de la partie.\n", nomJoueur, pionActuel);
+                printf(reset);
             }
         }
         // Tour de la machine
         else {
-            if (isFlyingPhase) {
-                position = trouverMeilleurCoupVol(board, pionActuel, pionAdverse);
-                printf(bleu);
-                printf("La machine (%c) déplace un pion vers la position %d.\n", pionActuel, position);
-                printf(reset);
-            } else {
+            if (isPlacementPhase) {
+                // Phase de placement pour la machine
                 position = trouverMeilleurCoup(board, pionActuel, pionAdverse);
-                printf(bleu);
+                printf(rouge);
                 printf("La machine (%c) choisit la position %d.\n", pionActuel, position);
                 printf(reset);
-            }
 
-            // Placer le pion
-            board[position] = pionActuel;
-            (*currentMoves)++;
+                // Placer le pion
+                board[position] = pionActuel;
+                (*currentMoves)++;
+                PionRestO--;
+            } else if (enableDisplacement) {
+                // Phase de déplacement pour la machine
+                position = trouverMeilleurCoupVol(board, pionActuel, pionAdverse);
+                printf(rouge);
+                printf("La machine (%c) déplace un pion vers la position %d.\n", pionActuel, position);
+                printf(reset);
+
+                // Déplacer le pion
+                board[position] = pionActuel;
+            } else {
+                // Mode Match Nul : aucun déplacement possible
+                printf(rouge);
+                printf("La machine (%c) ne peut pas déplacer de pion. Attendez la fin de la partie.\n", pionActuel);
+                printf(reset);
+            }
         }
 
         // Afficher le plateau après chaque tour
@@ -299,7 +349,7 @@ int getmachineAI() {
                     }
                 }
             } else {
-                printf(bleu);
+                printf(rouge);
                 printf("La machine (%c) retire un pion adverse.\n", pionActuel);
                 printf(reset);
                 retirePionmch(board, pionAdverse);
@@ -327,7 +377,7 @@ int getmachineAI() {
                 printf("%s (X) a gagné avec %d moulins contre %d moulins pour O.\n", nomJoueur, moulinsX, moulinsO);
                 printf(reset);
             } else if (moulinsO > moulinsX) {
-                printf(bleu);
+                printf(rouge);
                 printf("La machine (O) a gagné avec %d moulins contre %d moulins pour X.\n", moulinsO, moulinsX);
                 printf(reset);
             } else {

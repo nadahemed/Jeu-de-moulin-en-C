@@ -26,10 +26,25 @@ int getmachine() {
     int moulinsO = 0;
     char nomJoueur[50]; // Nom du joueur humain
     bool quitter = false; // Drapeau pour indiquer si le joueur a quitté
+    bool enableDisplacement = false; // Mode de déplacement activé ou désactivé
 
     // Initialisation du plateau
     for (int i = 0; i < taille; i++) {
         board[i] = '*';
+    }
+
+    // Demander le mode de jeu
+    printf("%sChoisissez le mode de jeu :%s\n", rouge, reset);
+    printf("%s1. Mode Match Nul (pas de déplacement après placement des pions)%s\n", rouge, reset);
+    printf("%s2. Mode Déplacement (déplacement des pions après placement)%s\n", bleu, reset);
+    printf("%sVotre choix (1 ou 2) : %s", rouge, reset);
+    int choixMode;
+    scanf("%d", &choixMode);
+    if (choixMode == 2) {
+        enableDisplacement = true;
+        printf("%sMode Déplacement activé.%s\n", bleu, reset);
+    } else {
+        printf("%sMode Match Nul activé.%s\n", rouge, reset);
     }
 
     // Demander si le joueur veut charger une sauvegarde
@@ -60,14 +75,59 @@ int getmachine() {
         int *PionRestAdverse = (joueurActuel == 1) ? &PionRestO : &PionRestX;
         int *currentMoves = (joueurActuel == 1) ? &movesX : &movesO;
 
+        // Afficher les pions restants
+        printf("%s%s (X) : %d pions restants%s\n", rouge, nomJoueur, PionRestX, reset);
+        printf("%sMachine (O) : %d pions restants%s\n", bleu, PionRestO, reset);
+
+        // Vérifier si tous les pions ont été placés
+        bool isPlacementPhase = (movesX < MAX_PIONS || movesO < MAX_PIONS);
+
         // Vérifier si le joueur actuel est en phase de vol
         bool isFlyingPhase = (joueurActuel == 1 && PionRestX == 3) || (joueurActuel == 2 && PionRestO == 3);
 
         // Tour du joueur humain
         if (joueurActuel == 1) {
-            if (isFlyingPhase) {
-                printf("%s%s (%c), vous êtes en phase de vol. Vous pouvez déplacer n'importe quel pion.%s\n", rouge, nomJoueur, pionActuel, reset);
-                printf("%sEntrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : %s", rouge, taille - 1, reset);
+            if (isPlacementPhase) {
+                // Phase de placement
+                printf("%s%s (%c), entrez une position (0-%d) ou -1 pour quitter : %s", rouge, nomJoueur, pionActuel, taille - 1, reset);
+
+                // Mesurer le temps
+                time_t debut = time(NULL);
+                int result = scanf("%d", &position);
+                time_t fin = time(NULL);
+
+                // Vérifier si le temps est dépassé
+                if (difftime(fin, debut) > TIME_LIMIT) {
+                    printf("%sTemps écoulé ! Vous avez dépassé le temps limite de %d secondes.%s\n", rouge, TIME_LIMIT, reset);
+                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
+                    continue;
+                }
+
+                if (result != 1 || position < -1 || position >= taille) {
+                    printf("%sPosition invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.%s\n", rouge, taille - 1, reset);
+                    while (getchar() != '\n');
+                    continue;
+                }
+
+                if (position == -1) {
+                    printf("%s%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !%s\n", rouge, nomJoueur, pionActuel, reset);
+                    quitter = true;
+                    break;
+                }
+
+                // Vérifier si la position est libre
+                if (board[position] != '*') {
+                    printf("%sLa position est déjà occupée. Veuillez choisir une autre position.%s\n", rouge, reset);
+                    continue;
+                }
+
+                // Placer le pion
+                board[position] = pionActuel;
+                (*currentMoves)++;
+                PionRestX--;
+            } else if (enableDisplacement) {
+                // Phase de déplacement
+                printf("%s%s (%c), vous pouvez déplacer un pion. Entrez la position actuelle du pion à déplacer (0-%d) ou -1 pour quitter : %s", rouge, nomJoueur, pionActuel, taille - 1, reset);
 
                 // Mesurer le temps
                 time_t debut = time(NULL);
@@ -131,47 +191,25 @@ int getmachine() {
                 board[position] = '*';
                 board[nouvellePosition] = pionActuel;
             } else {
-                printf("%s%s (%c), entrez une position (0-%d) ou -1 pour quitter : %s", rouge, nomJoueur, pionActuel, taille - 1, reset);
-
-                // Mesurer le temps
-                time_t debut = time(NULL);
-                int result = scanf("%d", &position);
-                time_t fin = time(NULL);
-
-                // Vérifier si le temps est dépassé
-                if (difftime(fin, debut) > TIME_LIMIT) {
-                    printf("%sTemps écoulé ! Vous avez dépassé le temps limite de %d secondes.%s\n", rouge, TIME_LIMIT, reset);
-                    joueurActuel = 3 - joueurActuel; // Passer au tour de la machine
-                    continue;
-                }
-
-                if (result != 1 || position < -1 || position >= taille) {
-                    printf("%sPosition invalide. Veuillez entrer un nombre entre 0 et %d, ou -1 pour quitter.%s\n", rouge, taille - 1, reset);
-                    while (getchar() != '\n');
-                    continue;
-                }
-
-                if (position == -1) {
-                    printf("%s%s (%c) a décidé de quitter le jeu. Merci d'avoir joué !%s\n", rouge, nomJoueur, pionActuel, reset);
-                    quitter = true;
-                    break;
-                }
-
-                // Vérifier si la position est libre
-                if (board[position] != '*') {
-                    printf("%sLa position est déjà occupée. Veuillez choisir une autre position.%s\n", rouge, reset);
-                    continue;
-                }
-
-                // Placer le pion
-                board[position] = pionActuel;
-                (*currentMoves)++;
+                // Mode Match Nul : aucun déplacement possible
+                printf("%s%s (%c), vous ne pouvez pas déplacer de pion. Attendez la fin de la partie.%s\n", rouge, nomJoueur, pionActuel, reset);
             }
         }
         // Tour de la machine
         else {
-            if (isFlyingPhase) {
-                // Phase de vol : déplacer un pion existant
+            if (isPlacementPhase) {
+                // Phase de placement pour la machine
+                do {
+                    position = rand() % taille; // Choisir une position aléatoire
+                } while (board[position] != '*'); // Trouver une position vide
+
+                // Placer le pion
+                board[position] = pionActuel;
+                (*currentMoves)++;
+                PionRestO--;
+                printf("%sLa machine (%c) choisit la position %d.%s\n", bleu, pionActuel, position, reset);
+            } else if (enableDisplacement) {
+                // Phase de déplacement pour la machine
                 do {
                     position = rand() % taille; // Choisir une position aléatoire
                 } while (board[position] != pionActuel); // Trouver un pion de la machine
@@ -186,15 +224,8 @@ int getmachine() {
                 board[nouvellePosition] = pionActuel;
                 printf("%sLa machine (%c) déplace un pion de %d à %d.%s\n", bleu, pionActuel, position, nouvellePosition, reset);
             } else {
-                // Phase normale : placer un nouveau pion
-                do {
-                    position = rand() % taille; // Choisir une position aléatoire
-                } while (board[position] != '*'); // Trouver une position vide
-
-                // Placer le pion
-                board[position] = pionActuel;
-                (*currentMoves)++;
-                printf("%sLa machine (%c) choisit la position %d.%s\n", bleu, pionActuel, position, reset);
+                // Mode Match Nul : aucun déplacement possible
+                printf("%sLa machine (%c) ne peut pas déplacer de pion. Attendez la fin de la partie.%s\n", bleu, pionActuel, reset);
             }
         }
 
@@ -260,7 +291,6 @@ int getmachine() {
 
     return 0;
 }
-
 
 
 

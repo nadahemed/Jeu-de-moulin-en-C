@@ -10,7 +10,7 @@
 #include "Start.c"
 #include "menu.c"
 #include "jeutest.c"
-#include "JoueurVsJoueur.c"
+#include "JoueurVsJoueur.c" 
 #include "playmusic.c"
 #define taille 24
 #include "regles.c"
