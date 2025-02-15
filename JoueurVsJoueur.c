@@ -174,7 +174,9 @@ int getposition() {
     int moulinsX = 0; // Nombre de moulins pour X
     int moulinsO = 0; // Nombre de moulins pour O
     char joueur1[50], joueur2[50]; // Variables pour stocker les noms des joueurs
-    bool enableDisplacement = false; // Mode de déplacement activé ou désactivé
+    bool enableDisplacement = false; 
+    bool moulinPrecedent = false;  // Nouvelle variable pour suivre le moulin précédent
+    int positionPrecedente = -1;// Mode de déplacement activé ou désactivé
 
     // Initialisation du plateau
     for (int i = 0; i < taille; i++) {
@@ -501,26 +503,64 @@ int getposition() {
 
         // Vérifie si un moulin est formé
         if (estMoulin(board, position, pionActuel)) {
-            if (pionActuel == 'X') {
-                printf(bleu);
-                printf("Moulin formé par %s (X) !\n", nomJoueurActuel);
-                printf(reset);
-            } else {
+            // Vérifier si c'est un double moulin
+            if (estDoubleMoulin(board, position, pionActuel)) {
+                if (pionActuel == 'X') {
+                    printf(bleu);
+                    printf("DOUBLE MOULIN formé par %s (X) !\n", nomJoueurActuel);
+                    printf(reset);
+                } else {
+                    printf(rouge);
+                    printf("DOUBLE MOULIN formé par %s (O) !\n", nomJoueurActuel);
+                    printf(reset);
+                }
+        
+                // Ajoutez au compteur de moulins (compte double)
+                if (joueurActuel == 1) {
+                    moulinsX += 2;
+                } else {
+                    moulinsO += 2;
+                }
+        
+                // Premier retrait de pion
                 printf(rouge);
-                printf("Moulin formé par %s (O) !\n", nomJoueurActuel);
+                printf("Retirez le premier pion adverse.\n");
                 printf(reset);
-            }
-
-            // Ajoutez au compteur de moulins
-            if (joueurActuel == 1) {
-                moulinsX++;
+                retirePion(board, pionAdverse);
+                (*PionRestAdverse)--;
+        
+                // Deuxième retrait de pion
+                if (*PionRestAdverse > 0) {  // Vérifier s'il reste des pions à retirer
+                    printf(rouge);
+                    printf("Retirez un deuxième pion !\n");
+                    printf(reset);
+                    retirePion(board, pionAdverse);
+                    (*PionRestAdverse)--;
+                }
             } else {
-                moulinsO++;
+                // Moulin simple
+                if (pionActuel == 'X') {
+                    printf(bleu);
+                    printf("Moulin formé par %s (X) !\n", nomJoueurActuel);
+                    printf(reset);
+                } else {
+                    printf(rouge);
+                    printf("Moulin formé par %s (O) !\n", nomJoueurActuel);
+                    printf(reset);
+                }
+        
+                // Ajoutez au compteur de moulins
+                if (joueurActuel == 1) {
+                    moulinsX++;
+                } else {
+                    moulinsO++;
+                }
+        
+                // Retirez un pion adverse
+                retirePion(board, pionAdverse);
+                (*PionRestAdverse)--;
             }
-
-            // Retirez un pion adverse
-            retirePion(board, pionAdverse);
-            (*PionRestAdverse)--;
+ 
 
             // Vérifiez si l'adversaire a moins de 3 pions
             if (*PionRestAdverse < 3) {

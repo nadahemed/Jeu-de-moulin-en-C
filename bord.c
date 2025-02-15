@@ -40,7 +40,8 @@ int main() {
         scanf("%d", &choix);
 
         switch (choix) {
-            case 1:
+            case 1 
+            :
                 startmoulin();
                 AfficheGrille();
                 sleep(2);
